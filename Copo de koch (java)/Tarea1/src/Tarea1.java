@@ -1,3 +1,5 @@
+package Tarea1.src;
+
 import java.util.Scanner;
 
 public class Tarea1 {

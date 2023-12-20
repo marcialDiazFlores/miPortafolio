@@ -6,6 +6,7 @@ def llenar_base_de_datos():
 
     cursor.execute('DELETE FROM discos')
     cursor.execute('DELETE FROM personas')
+    cursor.execute('DELETE FROM pedidos')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS discos (
