@@ -15,8 +15,8 @@ public class BancoVirtual {
                 System.out.println("\nMenú principal:");
                 System.out.println("\n1. Gestión de clientes");
                 System.out.println("2. Gestión de cuentas");
-                System.out.println("3. Realizar transacciones");
-                System.out.println("4. Salir");
+                // System.out.println("3. Realizar transacciones");
+                System.out.println("3. Salir");
 
                 System.out.print("\nSeleccione una opción: ");
                 int opcion = scanner.nextInt();
@@ -26,12 +26,14 @@ public class BancoVirtual {
                         menuClientes(scanner);
                         break;
                     case 2:
-                        menuCuentas(scanner);
+                        //menuCuentas(scanner);
                         break;
+                        /*
                     case 3:
                         //menuTransacciones();
                         break;
-                    case 4:
+                        */
+                    case 3:
                         System.out.println("Saliendo del programa...");
                         System.exit(0);
                     default:
@@ -54,7 +56,8 @@ public class BancoVirtual {
                 System.out.println("2. Lista de clientes");
                 System.out.println("3. Actualizar datos de un cliente");
                 System.out.println("4. Eliminar cliente");
-                System.out.println("5. Volver al manú principal");
+                System.out.println("5. Buscar cliente");
+                System.out.println("6. Volver al menú principal");
 
                 System.out.print("\nSeleccione una opción: ");
                 int opcion = scanner.nextInt();
@@ -67,12 +70,15 @@ public class BancoVirtual {
                         listaClientes(scanner);
                         break;
                     case 3:
-                        //actualizarClientes();
+                        //actualizarCliente();
                         break;
                     case 4:
-                        eliminarCliente();
+                        //eliminarCliente();
                         break;
                     case 5:
+                        //buscarCliente();
+                        break;
+                    case 6:
                         mostrarMenu();
                         break;
                     default:
@@ -107,8 +113,8 @@ public class BancoVirtual {
         String fono = scanner.next();
 
         try {
-            int cantClientes = getCantidadClientes();
-            crearCliente(nombre, apellido, email, rut, fono);
+            int cantClientes = controlador.getCantidadClientes();
+            controlador.crearCliente(nombre, apellido, email, rut, fono);
             System.out.println("\nCliente creado con éxito.");
         } catch (Exception e) {
             System.out.println("Error al crear el cliente: " + e.getMessage());
@@ -154,51 +160,120 @@ public class BancoVirtual {
         }
     }
 
-    private static void verDetallesCuentas(int seleccionCliente) {
+    private static void actualizarCliente() {
         Scanner scanner = new Scanner(System.in);
-        // Obtener la lista de cuentas del cliente desde el controlador
+        System.out.println();
 
-        if (!controlador.hayCuentas(seleccionCliente)) {
-            System.out.println("El cliente no tiene cuentas registradas.");
+        if (!controlador.hayClientes()) {
+            System.out.println("No hay clientes registrados.");
         } else {
-            try {
-                int cantCuentas = controlador.getCantidadCuentas(seleccionCliente);
-                if (cantCuentas == 1){
-                    if(controlador.hayCuentaAhorro(seleccionCliente - 1)){
-                        controlador.mostrarDetallesCuenta(seleccionCliente, 1);
-                        opcionesAdicionales(seleccionCliente);
-                    } else if (controlador.hayCuentaCorriente(seleccionCliente - 1)) {
-                        controlador.mostrarDetallesCuenta(seleccionCliente, 2);
-                        opcionesAdicionales(seleccionCliente);
-                    }
-                    else{
-                        return;
-                    }
-                }
+            // Mostrar la lista de clientes con números asociados
+            System.out.println("Ingrese el rut del cliente: ");
+            System.out.println();
+            String rut = scanner.next();
 
-                else {
-                    // Mostrar la lista de cuentas con números asociados
+            if (controlador.encontrarClientePorRUT(rut) != null) {
+                String nombreCliente = controlador.encontrarClientePorRUT(rut).getNombre();
+
+                System.out.println("Cliente encontrado");
+                System.out.println("Nombre: " + nombreCliente);
+
+                System.out.println("\nIngrese los nuevos datos del cliente:");
+                System.out.println();
+
+                System.out.print("Email: ");
+                String email = scanner.next();
+
+                System.out.print("Teléfono: ");
+                String fono = scanner.next();
+
+                controlador.actualizarCliente(rut, email, fono);
+
+                // Opciones adicionales
+                System.out.println("\n1. Volver a gestión de clientes");
+                System.out.println("2. Volver al menú principal");
+
+                System.out.println();
+
+                System.out.print("Seleccione una opción: ");
+                int opcionCliente = scanner.nextInt();
+
+                switch (opcionCliente) {
+                    case 1:
+                        // Volver al menú anterior
+                        menuClientes(scanner);
+                        break;
+                    case 2:
+                        // Volver al menú principal
+                        mostrarMenu();
+                        break;
+                    default:
+                        System.out.println("Opción no válida. Volviendo al menú anterior.");
+                }
+            }
+
+            else {
+                System.out.println("Cliente no encontrado, intente nuevamente");
+                actualizarCliente();
+            }
+
+             /*
+            try {
+                int seleccionCliente = scanner.nextInt();
+                System.out.println();
+
+                if (seleccionCliente >= 1 && seleccionCliente <= cantClientes) {
+                    System.out.println("\nIngrese los nuevos datos correspondientes a " + controlador.getClientes().get(seleccionCliente).getNombre());
                     System.out.println();
-                    System.out.print("Cuentas disponibles: ");
+
+                    System.out.print("Nombre: ");
+                    String nombre = scanner.next();
+
+                    System.out.print("Apellido: ");
+                    String apellido = scanner.next();
+
+                    System.out.print("Email: ");
+                    String email = scanner.next();
+
+                    System.out.print("RUT: ");
+                    String rut = scanner.next();
+
+                    System.out.print("Teléfono: ");
+                    String fono = scanner.next();
+
+                    controlador.actualizarCliente(seleccionCliente, nombre, apellido, email, rut, fono);
+
+                    // Opciones adicionales
+                    System.out.println("\n1. Volver al menú anterior");
+                    System.out.println("2. Volver al menú principal");
+
                     System.out.println();
-                    controlador.verCuentas(seleccionCliente);
-                    System.out.println();
-                    System.out.println("Ingrese 1 para ver detalles de la cuenta de ahorro");
-                    System.out.println("Ingrese 2 para ver detalles de la cuenta corriente");
-                    System.out.println("Ingrese 0 para volver al menú anterior");
-                    System.out.println();
-                    int tipo = scanner.nextInt();
-                    if (tipo == 0){
-                        listaClientes(scanner);
+
+                    System.out.print("Seleccione una opción: ");
+                    int opcionCliente = scanner.nextInt();
+
+                    switch (opcionCliente) {
+                        case 1:
+                            // Volver al menú anterior
+                            actualizarCliente();
+                            break;
+                        case 2:
+                            // Volver al menú principal
+                            mostrarMenu();
+                            break;
+                        default:
+                            System.out.println("Opción no válida. Volviendo al menú anterior.");
                     }
-                    controlador.mostrarDetallesCuenta(seleccionCliente, tipo);
-                    opcionesAdicionales(seleccionCliente);
+                } else if (seleccionCliente == 0) {
+                    // Volver al menú anterior
+                } else {
+                    System.out.println("Número de cliente no válido. Volviendo al menú anterior.");
                 }
             }
             catch (java.util.InputMismatchException e) {
                 System.out.println("Error: Ingrese un número válido.");
                 scanner.nextLine();  // Limpiar el búfer de entrada
-            }
+            } */
         }
     }
 
@@ -225,6 +300,8 @@ public class BancoVirtual {
                 System.out.println("Opción no válida. Volviendo al menú anterior.");
         }
     }
+
+    /*
 
     private static void eliminarCliente() {
         Scanner scanner = new Scanner(System.in);
@@ -274,6 +351,54 @@ public class BancoVirtual {
                     // Volver al menú anterior
                 } else {
                     System.out.println("Número de cliente no válido. Volviendo al menú anterior.");
+                }
+            }
+            catch (java.util.InputMismatchException e) {
+                System.out.println("Error: Ingrese un número válido.");
+                scanner.nextLine();  // Limpiar el búfer de entrada
+            }
+        }
+    }
+
+    private static void verDetallesCuentas(int seleccionCliente) {
+        Scanner scanner = new Scanner(System.in);
+        // Obtener la lista de cuentas del cliente desde el controlador
+
+        if (!controlador.hayCuentas(seleccionCliente)) {
+            System.out.println("El cliente no tiene cuentas registradas.");
+        } else {
+            try {
+                int cantCuentas = controlador.getCantidadCuentas(seleccionCliente);
+                if (cantCuentas == 1){
+                    if(controlador.hayCuentaAhorro(seleccionCliente - 1)){
+                        controlador.mostrarDetallesCuenta(seleccionCliente, 1);
+                        opcionesAdicionales(seleccionCliente);
+                    } else if (controlador.hayCuentaCorriente(seleccionCliente - 1)) {
+                        controlador.mostrarDetallesCuenta(seleccionCliente, 2);
+                        opcionesAdicionales(seleccionCliente);
+                    }
+                    else{
+                        return;
+                    }
+                }
+
+                else {
+                    // Mostrar la lista de cuentas con números asociados
+                    System.out.println();
+                    System.out.print("Cuentas disponibles: ");
+                    System.out.println();
+                    controlador.verCuentas(seleccionCliente);
+                    System.out.println();
+                    System.out.println("Ingrese 1 para ver detalles de la cuenta de ahorro");
+                    System.out.println("Ingrese 2 para ver detalles de la cuenta corriente");
+                    System.out.println("Ingrese 0 para volver al menú anterior");
+                    System.out.println();
+                    int tipo = scanner.nextInt();
+                    if (tipo == 0){
+                        listaClientes(scanner);
+                    }
+                    controlador.mostrarDetallesCuenta(seleccionCliente, tipo);
+                    opcionesAdicionales(seleccionCliente);
                 }
             }
             catch (java.util.InputMismatchException e) {
@@ -423,7 +548,7 @@ public class BancoVirtual {
                         listaClientes(scanner);
                         break;
                     case 3:
-                        //actualizarClientes();
+                        //actualizarCliente();
                         break;
                     case 4:
                         eliminarCliente();
@@ -639,37 +764,24 @@ public class BancoVirtual {
         }
     }
 
-    private static void inicializarControlador() {
-        controlador = new ControladorBanco();
-    }
-
-    private static void reiniciarBDD() {
-       // controlador.reiniciarBDD();
-    }
-
-    private static void crearCliente(String nombre, String apellido, String email, String rut, String fono) {
-        controlador.crearCliente(nombre, apellido, email, rut, fono);
-    }
-
-    private static int getCantidadClientes() {
-        return controlador.getCantidadClientes();
-    }
+    */
 
 
     public static void main(String[] args) {
-        inicializarControlador();
-        reiniciarBDD();
+        controlador = new ControladorBanco();
 
-        crearCliente("Marcial", "Díaz", "marcial.diaz03@inacapmail.cl", "19.524.734-k", "+56978030199");
-        crearCliente("Valentina", "Díaz", "vale.diaz03@inacapmail.cl", "19.960.609-9", "+56978036504");
+        controlador.crearCliente("cacacaca", "Díaz", "marcial.diaz03@inacapmail.cl", "19.524.734-k", "+56978030199");
+        controlador.crearCliente("culo", "Díaz", "vale.diaz03@inacapmail.cl", "19.960.609-9", "+56978036504");
 
+        /*
         controlador.crearCuentaAhorro(1, 150000, "a", 6, 100000);
         controlador.crearCuentaCorriente(1,465630, "c", 55000);
 
         controlador.crearCuentaAhorro(2, 666000, "a", 6, 800000);
         controlador.crearCuentaCorriente(2,1000000, "c", 400000);
+        */
 
-        System.out.println("\n¡Hola! Bienvenid@ al Banco Virtual");
+        System.out.println("\n¡Hola! Bienvenid@ al módulo de administración del Banco Virtual");
         mostrarMenu();
     }
 }

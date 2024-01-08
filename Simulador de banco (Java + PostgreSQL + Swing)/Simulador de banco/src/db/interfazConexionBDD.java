@@ -1,8 +1,8 @@
 package db;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public interface interfazConexionBDD {
-    Connection conectar();
-    void desconectar();
+    Connection conectar() throws SQLException;
 }

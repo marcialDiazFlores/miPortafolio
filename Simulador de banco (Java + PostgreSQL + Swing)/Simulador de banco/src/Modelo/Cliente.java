@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Cliente {
 
-    private static int ultimoID = 0;
     private int id;
     private String nombre;
     private String apellido;
@@ -18,7 +17,6 @@ public class Cliente {
     // Constructor
 
     public Cliente(String nombre, String apellido, String email, String rut, String fono) {
-        this.id = ++ultimoID;
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
