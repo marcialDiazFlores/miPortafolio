@@ -108,4 +108,18 @@ public class Cliente {
         }
         return null;  // No se encontró una cuenta corriente
     }
+
+    public String toString() {
+        String cuentaAhorro = (this.getCuentaAhorro() != null) ? "Sí" : "No";
+        String cuentaCorriente = (this.getCuentaCorriente() != null) ? "Sí" : "No";
+
+        return "ID: " + this.getId() + " | " +
+                "Nombre: " + this.getNombre() + " | " +
+                "Apellido: " + this.getApellido() + " | " +
+                "Rut: " + this.getRut() + " | " +
+                "Email: " + this.getEmail() + " | " +
+                "Teléfono: " + this.getFono() + " | " +
+                "¿Tiene cuenta de ahorro? " + cuentaAhorro + " | " +
+                "¿Tiene cuenta corriente? " + cuentaCorriente;
+    }
 }

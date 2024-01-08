@@ -70,13 +70,13 @@ public class BancoVirtual {
                         listaClientes(scanner);
                         break;
                     case 3:
-                        //actualizarCliente();
+                        actualizarCliente();
                         break;
                     case 4:
-                        //eliminarCliente();
+                        eliminarCliente();
                         break;
                     case 5:
-                        //buscarCliente();
+                        buscarCliente();
                         break;
                     case 6:
                         mostrarMenu();
@@ -176,7 +176,7 @@ public class BancoVirtual {
                 String nombreCliente = controlador.encontrarClientePorRUT(rut).getNombre();
 
                 System.out.println("Cliente encontrado");
-                System.out.println("Nombre: " + nombreCliente);
+                System.out.println("Nombre: " + nombreCliente + ", ID: " + controlador.encontrarClientePorRUT(rut).getId());
 
                 System.out.println("\nIngrese los nuevos datos del cliente:");
                 System.out.println();
@@ -298,6 +298,69 @@ public class BancoVirtual {
                 break;
             default:
                 System.out.println("Opción no válida. Volviendo al menú anterior.");
+        }
+    }
+
+    private static void eliminarCliente() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println();
+
+        if (!controlador.hayClientes()) {
+            System.out.println("No hay clientes registrados.");
+        } else {
+            // Mostrar la lista de clientes con números asociados
+            System.out.println("Ingrese el rut del cliente: ");
+            System.out.println();
+            String rut = scanner.next();
+
+            if (controlador.encontrarClientePorRUT(rut) != null) {
+                String nombreCliente = controlador.encontrarClientePorRUT(rut).getNombre();
+
+                System.out.println("Cliente encontrado");
+                System.out.println("Nombre: " + nombreCliente + ", ID: " + controlador.encontrarClientePorRUT(rut).getId());
+
+                System.out.println("\nIngrese 1 para borrar al cliente de la base de datos");
+                System.out.println("\nPresione cualquier otra tecla para volver al menú de gestión de clientes");
+
+                int seleccion = scanner.nextInt();
+
+                if (seleccion == 1) {
+                    controlador.eliminarCliente(rut);
+                    menuClientes(scanner);
+                }
+
+                else {
+                    menuClientes(scanner);
+                }
+            }
+
+            else {
+                System.out.println("Cliente no encontrado, intente nuevamente");
+                eliminarCliente();
+            }
+        }
+    }
+
+    private static void buscarCliente() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println();
+
+        if (!controlador.hayClientes()) {
+            System.out.println("No hay clientes registrados.");
+        } else {
+            // Mostrar la lista de clientes con números asociados
+            System.out.println("Ingrese el rut del cliente: ");
+            System.out.println();
+            String rut = scanner.next();
+            String res = controlador.buscarCliente(rut);
+            if (res != null){
+                System.out.println("Cliente encontrado en la base de datos");
+                System.out.println();
+                System.out.println(res);
+            }
+            else {
+                System.out.println("Cliente no encontrado en la base de datos");
+            }
         }
     }
 

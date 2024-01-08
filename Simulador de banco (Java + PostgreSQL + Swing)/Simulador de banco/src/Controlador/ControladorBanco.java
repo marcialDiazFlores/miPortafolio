@@ -35,7 +35,7 @@ public class ControladorBanco {
         }
     }
 
-    public void actualizarCliente (String rut, String email, String fono) {
+    public void actualizarCliente(String rut, String email, String fono) {
         try {
             Cliente cliente = encontrarClientePorRUT(rut);
             /*
@@ -43,10 +43,37 @@ public class ControladorBanco {
             cliente.setFono(fono);
             */
             clienteDAO.actualizarCliente(cliente, email, fono);
-            System.out.println("Los datos del cliente se actualizaron exitosamente.");
         } catch (SQLException e) {
             // Manejo de la excepción con mensaje de error
             System.err.println("No se pudieron actualizar los datos del cliente. Error: " + e.getMessage());
+        }
+    }
+
+    public void eliminarCliente(String rut) {
+        try {
+            Cliente cliente = encontrarClientePorRUT(rut);
+            clientes.remove(cliente);
+            clienteDAO.eliminarCliente(cliente.getId());
+        } catch (SQLException e) {
+            // Manejo de la excepción con mensaje de error
+            System.err.println("No se pudo eliminar al cliente de la base de datos. Error: " + e.getMessage());
+        }
+    }
+
+    public String buscarCliente(String rut) {
+        try {
+            Cliente cliente = encontrarClientePorRUT(rut);
+            Cliente res = clienteDAO.obtenerClientePorId(cliente.getId());
+            if (res != null) {
+                return res.toString();
+            }
+            else {
+                return null;
+            }
+        } catch (SQLException e) {
+            // Manejo de la excepción con mensaje de error
+            System.err.println("No se pudo encontrar al cliente en la base de datos. Error: " + e.getMessage());
+            return null;
         }
     }
 

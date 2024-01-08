@@ -12,11 +12,45 @@ public class ClienteDAO implements interfazClienteDAO
     ConexionBDD conn = new ConexionBDD();
     Connection connection;
 
+    public Cliente obtenerClientePorId(int id) throws SQLException {
+        Cliente cliente = null;
+
+        try (Connection connection = conn.conectar()) {
+            String query = "SELECT * FROM clientes WHERE id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                // Se establecen los parámetros de la consulta
+                preparedStatement.setInt(1, id);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        // Se obtienen los datos del resultado y se crea un objeto Cliente
+                        String nombre = resultSet.getString("nombre");
+                        String apellido = resultSet.getString("apellido");
+                        String email = resultSet.getString("email");
+                        String rut = resultSet.getString("rut");
+                        String fono = resultSet.getString("fono");
+
+                        cliente = new Cliente(nombre, apellido, email, rut, fono);
+                        cliente.setId(id);
+
+                        return cliente;
+
+                    } else {
+                        System.out.println("Error: No se encontró el cliente con ID " + id);
+                        return null;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener cliente por ID", e);
+        }
+    }
+
     public List<Cliente> obtenerTodosLosClientes() {
         List<Cliente> clientes = new ArrayList<>();
 
         try (Connection connection = conn.conectar()) {
-            String query = "SELECT * FROM Clientes";
+            String query = "SELECT * FROM clientes";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query);
                  ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -38,7 +72,6 @@ public class ClienteDAO implements interfazClienteDAO
                 }
             }
         } catch (SQLException e) {
-            // Maneja la excepción según tus necesidades
             e.printStackTrace();
         }
 
@@ -53,7 +86,7 @@ public class ClienteDAO implements interfazClienteDAO
     public void agregarCliente(Cliente cliente) throws SQLException {
         try (Connection connection = conn.conectar()) {
 
-            String query = "INSERT INTO Clientes (id, nombre, apellido, email, rut, fono) VALUES (DEFAULT, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO clientes (id, nombre, apellido, email, rut, fono) VALUES (DEFAULT, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 // Se obtienen los datos del objeto Cliente
@@ -106,7 +139,7 @@ public class ClienteDAO implements interfazClienteDAO
 
     public void actualizarCliente(Cliente cliente, String nuevoEmail, String nuevoFono) throws SQLException {
         try (Connection connection = conn.conectar()) {
-            String query = "UPDATE Clientes SET email = ?, fono = ? WHERE id = ?";
+            String query = "UPDATE clientes SET email = ?, fono = ? WHERE id = ?";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 // Se establecen los parámetros de la consulta
@@ -121,6 +154,7 @@ public class ClienteDAO implements interfazClienteDAO
                     // La actualización fue exitosa
                     cliente.setEmail(nuevoEmail);
                     cliente.setFono(nuevoFono);
+                    System.out.println();
                     System.out.println("Cliente actualizado exitosamente.");
                 } else {
                     System.out.println("Error: No se encontró el cliente con ID " + cliente.getId());
@@ -132,8 +166,26 @@ public class ClienteDAO implements interfazClienteDAO
     }
 
 
-    public void eliminarCliente(int id) {
+    public void eliminarCliente(int id) throws SQLException {
+        try (Connection connection = conn.conectar()) {
+            String query = "DELETE FROM clientes WHERE id = ?";
 
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                // Se establecen los parámetros de la consulta
+                preparedStatement.setInt(1, id);
+
+                // Se ejecuta la consulta preparada
+                int filasActualizadas = preparedStatement.executeUpdate();
+
+                if (filasActualizadas > 0) {
+                    System.out.println("Cliente eliminado exitosamente de la base de datos.");
+                } else {
+                    System.out.println("Error: No se encontró el cliente con ID " + id);
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar al cliente de la base de datos", e);
+        }
     }
 
     /*
