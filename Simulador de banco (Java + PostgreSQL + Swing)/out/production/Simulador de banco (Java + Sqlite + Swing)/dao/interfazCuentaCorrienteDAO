@@ -1,0 +1,13 @@
+package dao;
+
+import java.util.List;
+
+import Modelo.CuentaAhorro;
+
+public interface interfazCuentaCorrienteDAO {
+    CuentaCorriente obtenerCuentaCorrientePorId(int id);
+    List<CuentaCorriente> obtenerCuentasCorrientes();
+    void agregarCuentaCorriente(CuentaCorriente cuenta);
+    void actualizarCuentaCorriente(CuentaCorriente cuenta);
+    void eliminarCuentaCorriente(int id);
+}
