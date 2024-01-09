@@ -1,13 +1,13 @@
 package dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import Modelo.CuentaAhorro;
 
 public interface interfazCuentaAhorroDAO {
-    CuentaAhorro obtenerCuentaAhorroPorId(int id);
-    List<CuentaAhorro> obtenerCuentasDeAhorro();
-    void agregarCuentaAhorro(CuentaAhorro cuenta);
-    void actualizarCuentaAhorro(CuentaAhorro cuenta);
-    void eliminarCuentaAhorro(int id);
+    //CuentaAhorro obtenerCuentaDeAhorroPorId(int id) throws SQLException;
+    //List<CuentaAhorro> obtenerCuentasDeAhorro() throws SQLException;
+    void agregarCuentaDeAhorro(CuentaAhorro cuenta) throws SQLException;
+    //void eliminarCuentaDeAhorro(int id) throws SQLException;
 }

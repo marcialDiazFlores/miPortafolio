@@ -4,14 +4,12 @@ package Modelo;
 // Hereda de la clase CuentaBancaria
 
 public class CuentaCorriente extends CuentaBancaria {
-
-    private static int ultimoID = 0;
     private int sobregiro;
 
     // Constructor
 
-    public CuentaCorriente(int idCliente, int saldo, String tipo, int sobregiro) {
-        super(++ultimoID, idCliente, saldo, tipo);
+    public CuentaCorriente(int idCliente, int saldo, int sobregiro) {
+        super(idCliente, saldo);
         this.sobregiro = sobregiro;
     }
 

@@ -21,6 +21,26 @@ public class ConexionBDD implements interfazConexionBDD {
         } catch (ClassNotFoundException e) {
             throw new SQLException("Error al cargar el controlador JDBC", e);
         }
+    }/*
+
+    public void crearTablaClientes () {
+        try (Connection connection = conn.conectar()) {
+            String createTableQuery = "CREATE TABLE IF NOT EXISTS Clientes (" +
+                    "ID SERIAL PRIMARY KEY," +
+                    "Nombre VARCHAR(255) NOT NULL," +
+                    "Apellido VARCHAR(255) NOT NULL," +
+                    "Email VARCHAR(255) NOT NULL," +
+                    "RUT VARCHAR(20) NOT NULL," +
+                    "Fono VARCHAR(20) NOT NULL)";
+
+            PreparedStatement createTableStatement = connection.prepareStatement(createTableQuery);
+            createTableStatement.executeUpdate();
+        }
+        catch (SQLException e) {
+            System.err.println("No se pudo crear la tabla Cliente");
+            e.printStackTrace();
+        }
     }
+    */
 
 }

@@ -1,0 +1,7 @@
+CREATE TABLE cuentas_ahorro (
+    id SERIAL PRIMARY KEY,
+    cliente_id INTEGER REFERENCES clientes(id) NOT NULL,
+    saldo INTEGER,
+    tasa_interes FLOAT,
+    tope_minimo INTEGER
+);

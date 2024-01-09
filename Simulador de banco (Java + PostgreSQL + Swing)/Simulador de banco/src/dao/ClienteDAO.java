@@ -10,7 +10,6 @@ import db.ConexionBDD;
 public class ClienteDAO implements interfazClienteDAO 
 {
     ConexionBDD conn = new ConexionBDD();
-    Connection connection;
 
     public Cliente obtenerClientePorId(int id) throws SQLException {
         Cliente cliente = null;
@@ -75,11 +74,6 @@ public class ClienteDAO implements interfazClienteDAO
             e.printStackTrace();
         }
 
-        // Verifica si la lista está vacía y muestra un mensaje si es así
-        if (clientes.isEmpty()) {
-            System.out.println("No hay clientes en la base de datos.");
-        }
-
         return clientes;
     }
 
@@ -102,15 +96,6 @@ public class ClienteDAO implements interfazClienteDAO
                 preparedStatement.setString(3, email);
                 preparedStatement.setString(4, rut);
                 preparedStatement.setString(5, fono);
-
-                /*
-
-                System.out.println("Cliente antes de la inserción: " + cliente);
-                System.out.println("Query ejecutada: " + preparedStatement.toString());
-
-                System.out.println("Consulta SQL: " + query);
-
-                */
 
                 // Se ejecuta la consulta preparada
                 preparedStatement.executeUpdate();
@@ -187,27 +172,5 @@ public class ClienteDAO implements interfazClienteDAO
             throw new SQLException("Error al eliminar al cliente de la base de datos", e);
         }
     }
-
-    /*
-    public ClienteDAO () {
-        try (Connection connection = conn.conectar()) {
-            String createTableQuery = "CREATE TABLE IF NOT EXISTS Clientes (" +
-                    "ID SERIAL PRIMARY KEY," +
-                    "Nombre VARCHAR(255) NOT NULL," +
-                    "Apellido VARCHAR(255) NOT NULL," +
-                    "Email VARCHAR(255) NOT NULL," +
-                    "RUT VARCHAR(20) NOT NULL," +
-                    "Fono VARCHAR(20) NOT NULL)";
-
-            PreparedStatement createTableStatement = connection.prepareStatement(createTableQuery);
-            createTableStatement.executeUpdate();
-        }
-        catch (SQLException e) {
-            System.err.println("No se pudo crear la tabla Cliente");
-            e.printStackTrace();
-        }
-    }
-
-    */
     
 }

@@ -4,24 +4,15 @@ import Modelo.*;
 import dao.*;
 import java.sql.SQLException;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ControladorBanco {
+public class ControladorClientes {
     private List<Cliente> clientes;
     private ClienteDAO clienteDAO;
 
-    public ControladorBanco() {
+    public ControladorClientes() {
         this.clienteDAO = new ClienteDAO();
         this.clientes = clienteDAO.obtenerTodosLosClientes();
-    }
-
-    public List<Cliente> getClientes() {
-        return clientes;
-    }
-
-    public void setClientes(List<Cliente> clientes) {
-        this.clientes = clientes;
     }
 
     public void crearCliente(String nombre, String apellido, String email, String rut, String fono) {
@@ -118,6 +109,16 @@ public class ControladorBanco {
 
     public boolean hayCuentaAhorro(int seleccionCliente){
         Cliente clienteSeleccionado = clientes.get(seleccionCliente);
+        if (clienteSeleccionado.getCuentaAhorro() != null){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean hayCuentaAhorro(String rut){
+        Cliente clienteSeleccionado = encontrarClientePorRUT(rut);
         if (clienteSeleccionado.getCuentaAhorro() != null){
             return true;
         }

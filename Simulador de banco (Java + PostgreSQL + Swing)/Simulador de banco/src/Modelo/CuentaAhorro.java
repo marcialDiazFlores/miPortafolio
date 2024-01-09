@@ -2,18 +2,16 @@ package Modelo;
 
 // Hereda de la clase CuentaBancaria
 public class CuentaAhorro extends CuentaBancaria {
-
-    private static int ultimoID = 0;
-    private int tasaInteres;
+    private float tasaInteres;
     private int topeMinimo;
 
-    public CuentaAhorro(int idCliente, int saldo, String tipo, int tasaInteres, int topeMinimo) {
-        super(++ultimoID, idCliente, saldo, tipo);
+    public CuentaAhorro(int idCliente, int saldo, float tasaInteres, int topeMinimo) {
+        super(idCliente, saldo);
         this.tasaInteres = tasaInteres;
         this.topeMinimo = topeMinimo;
     }
 
-    public int getTasaInteres() {
+    public float getTasaInteres() {
         return tasaInteres;
     }
 
@@ -28,6 +26,8 @@ public class CuentaAhorro extends CuentaBancaria {
     public void setTopeMinimo(int topeMinimo) {
         this.topeMinimo = topeMinimo;
     }
+
+    /*
 
     // Polimorfismo (sobrecarga del método)
     public void retirar(int monto) {
@@ -55,4 +55,6 @@ public class CuentaAhorro extends CuentaBancaria {
             System.out.println("Error: El monto de retiro debe ser mayor que cero.");
         }
     }
+
+    */
 }

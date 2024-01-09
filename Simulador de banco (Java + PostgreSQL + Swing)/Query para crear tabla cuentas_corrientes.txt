@@ -1,0 +1,6 @@
+CREATE TABLE cuentas_corrientes (
+    id SERIAL PRIMARY KEY,
+    cliente_id INTEGER REFERENCES clientes(id) NOT NULL,
+    saldo INTEGER,
+    sobregiro INTEGER
+);
