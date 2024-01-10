@@ -12,7 +12,8 @@ public class Cliente {
     private String email;
     private String rut;
     private String fono;
-    private List<CuentaBancaria> cuentas;
+    private CuentaDeAhorro cuentaDeAhorro;
+    private CuentaCorriente cuentaCorriente;
 
     // Constructor
 
@@ -22,7 +23,6 @@ public class Cliente {
         this.email = email;
         this.rut = rut;
         this.fono = fono;
-        this.cuentas = new ArrayList<>();
     }
 
     // Getters
@@ -51,7 +51,8 @@ public class Cliente {
         return fono;
     }
 
-    public List<CuentaBancaria> getCuentas() { return cuentas; }
+    public CuentaDeAhorro getCuentaDeAhorro() { return cuentaDeAhorro; }
+    public CuentaCorriente getCuentaCorriente() { return cuentaCorriente; }
 
     // Setters
 
@@ -79,39 +80,16 @@ public class Cliente {
         this.fono = fono;
     }
 
-    public void setCuentas(List<CuentaBancaria> cuentas) { this.cuentas = cuentas; }
-
-    // Operaciones sobre las cuentas
-
-    public void agregarCuenta(CuentaBancaria cuenta) {
-        cuentas.add(cuenta);
+    public void setCuentaDeAhorro(CuentaDeAhorro cuentaDeAhorro) {
+        this.cuentaDeAhorro = cuentaDeAhorro;
     }
-
-    public void eliminarCuenta(CuentaBancaria cuenta) {
-        cuentas.remove(cuenta);
-    }
-
-    public CuentaAhorro getCuentaAhorro() {
-        for (CuentaBancaria cuenta : cuentas) {
-            if (cuenta instanceof CuentaAhorro) {
-                return (CuentaAhorro) cuenta;
-            }
-        }
-        return null;  // No se encontró una cuenta de ahorro
-    }
-
-    public CuentaCorriente getCuentaCorriente() {
-        for (CuentaBancaria cuenta : cuentas) {
-            if (cuenta instanceof CuentaCorriente) {
-                return (CuentaCorriente) cuenta;
-            }
-        }
-        return null;  // No se encontró una cuenta corriente
+    public void setCuentaCorriente(CuentaCorriente cuentaCorriente) {
+        this.cuentaCorriente = cuentaCorriente;
     }
 
     public String toString() {
-        String cuentaAhorro = (this.getCuentaAhorro() != null) ? "Sí" : "No";
-        String cuentaCorriente = (this.getCuentaCorriente() != null) ? "Sí" : "No";
+        String cuentaDeAhorro = (this.cuentaDeAhorro != null) ? "Sí" : "No";
+        String cuentaCorriente = (this.cuentaCorriente != null) ? "Sí" : "No";
 
         return "ID: " + this.getId() + " | " +
                 "Nombre: " + this.getNombre() + " | " +
@@ -119,7 +97,7 @@ public class Cliente {
                 "Rut: " + this.getRut() + " | " +
                 "Email: " + this.getEmail() + " | " +
                 "Teléfono: " + this.getFono() + " | " +
-                "¿Tiene cuenta de ahorro? " + cuentaAhorro + " | " +
+                "¿Tiene cuenta de ahorro? " + cuentaDeAhorro + " | " +
                 "¿Tiene cuenta corriente? " + cuentaCorriente;
     }
 }

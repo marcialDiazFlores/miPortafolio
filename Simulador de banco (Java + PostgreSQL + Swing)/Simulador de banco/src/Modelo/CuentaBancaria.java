@@ -10,6 +10,10 @@ public class CuentaBancaria {
 
     // Constructor
 
+    public CuentaBancaria() {
+
+    }
+
     public CuentaBancaria(int idCliente, int saldo) {
         this.idCliente = idCliente;
         this.saldo = saldo;

@@ -1,10 +1,14 @@
 package Controlador;
 
 import Modelo.*;
-import dao.*;
+import DAO.*;
 import java.sql.SQLException;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ControladorClientes {
     private List<Cliente> clientes;
@@ -43,28 +47,29 @@ public class ControladorClientes {
     public void eliminarCliente(String rut) {
         try {
             Cliente cliente = encontrarClientePorRUT(rut);
-            clientes.remove(cliente);
-            clienteDAO.eliminarCliente(cliente.getId());
+            if (cliente != null) {
+                ControladorCuentasDeAhorro controladorCuentasDeAhorro = new ControladorCuentasDeAhorro();
+                controladorCuentasDeAhorro.eliminarCuentaDeAhorro(cliente.getRut());
+                ControladorCuentasCorrientes controladorCuentasCorrientes = new ControladorCuentasCorrientes();
+                controladorCuentasCorrientes.eliminarCuentaCorriente(cliente.getRut());
+                clientes.remove(cliente);
+                clienteDAO.eliminarCliente(cliente.getId());
+            }
         } catch (SQLException e) {
             // Manejo de la excepción con mensaje de error
             System.err.println("No se pudo eliminar al cliente de la base de datos. Error: " + e.getMessage());
         }
     }
 
-    public String buscarCliente(String rut) {
-        try {
-            Cliente cliente = encontrarClientePorRUT(rut);
-            Cliente res = clienteDAO.obtenerClientePorId(cliente.getId());
-            if (res != null) {
-                return res.toString();
-            }
-            else {
-                return null;
-            }
-        } catch (SQLException e) {
-            // Manejo de la excepción con mensaje de error
-            System.err.println("No se pudo encontrar al cliente en la base de datos. Error: " + e.getMessage());
-            return null;
+    public void buscarCliente(String rut) {
+        Cliente cliente = encontrarClientePorRUT(rut);
+        if (cliente != null){
+            System.out.println("Cliente encontrado en la base de datos");
+            System.out.println();
+            mostrarDetallesCliente(cliente);
+        }
+        else {
+            System.out.println("Cliente no encontrado en la base de datos");
         }
     }
 
@@ -77,20 +82,35 @@ public class ControladorClientes {
         return null;
     }
 
-    public void mostrarDetallesCliente(int seleccionCliente){
-        Cliente clienteSeleccionado = clientes.get(seleccionCliente);
-        String cuentaAhorro = hayCuentaAhorro(seleccionCliente) ? "Sí" : "No";
-        String cuentaCorriente = hayCuentaCorriente(seleccionCliente) ? "Sí" : "No";
+    public Cliente encontrarClientePorId(int idCliente) {
+        for (Cliente cliente : clientes) {
+            if (cliente.getId() == idCliente) {
+                return cliente;
+            }
+        }
+        return null;
+    }
 
-        // Mostrar detalles del cliente
-        System.out.print("ID: " + clienteSeleccionado.getId() + " | ");
-        System.out.print("Nombre: " + clienteSeleccionado.getNombre() + " | ");
-        System.out.print("Apellido: " + clienteSeleccionado.getApellido() + " | ");
-        System.out.print("Rut: " + clienteSeleccionado.getRut() + " | ");
-        System.out.print("Email: " + clienteSeleccionado.getEmail() + " | ");
-        System.out.println("Teléfono: " + clienteSeleccionado.getFono());
-        System.out.print(" | ¿Tiene cuenta de ahorro? " + cuentaAhorro + " | ");
-        System.out.println("¿Tiene cuenta corriente? " + cuentaCorriente);
+    public void mostrarDetallesCliente(Cliente cliente){
+        if (cliente != null) {
+            Cliente clienteSeleccionado = encontrarClientePorId(cliente.getId());
+            String cuentaAhorro = (hayCuentaAhorro(cliente.getRut())) ? "Sí" : "No";
+            String cuentaCorriente = (hayCuentaCorriente(cliente.getRut())) ? "Sí" : "No";
+
+            // Mostrar detalles del cliente
+            System.out.print("ID: " + clienteSeleccionado.getId() + " | ");
+            System.out.print("Nombre: " + clienteSeleccionado.getNombre() + " | ");
+            System.out.print("Apellido: " + clienteSeleccionado.getApellido() + " | ");
+            System.out.print("Rut: " + clienteSeleccionado.getRut() + " | ");
+            System.out.print("Email: " + clienteSeleccionado.getEmail() + " | ");
+            System.out.println("Teléfono: " + clienteSeleccionado.getFono());
+            System.out.print(" | ¿Tiene cuenta de ahorro? " + cuentaAhorro + " | ");
+            System.out.println("¿Tiene cuenta corriente? " + cuentaCorriente);
+        }
+    }
+
+    private void ordenarClientesPorId() {
+        Collections.sort(clientes, Comparator.comparingInt(Cliente::getId));
     }
 
     public void mostrarDetallesClientes(){
@@ -98,28 +118,31 @@ public class ControladorClientes {
             System.out.println("No hay clientes registrados en este momento");
         }
         else {
+            ControladorCuentasDeAhorro cont = new ControladorCuentasDeAhorro();
+            agregarCuentasDeAhorro(cont.getCuentasDeAhorro());
+            ordenarClientesPorId();
             int cantClientes = this.getCantidadClientes();
             for (int i = 0; i < cantClientes; i++) {
                 System.out.print("- ");
-                mostrarDetallesCliente(i);
+                mostrarDetallesCliente(clientes.get(i));
                 System.out.println();
             }
         }
     }
 
-    public boolean hayCuentaAhorro(int seleccionCliente){
-        Cliente clienteSeleccionado = clientes.get(seleccionCliente);
-        if (clienteSeleccionado.getCuentaAhorro() != null){
+    /*public boolean hayCuentaAhorro(int id){
+        Cliente clienteSeleccionado = clientes.get(id);
+        if (clienteSeleccionado.getCuentaDeAhorro() != null){
             return true;
         }
         else {
             return false;
         }
-    }
+    }*/
 
     public boolean hayCuentaAhorro(String rut){
         Cliente clienteSeleccionado = encontrarClientePorRUT(rut);
-        if (clienteSeleccionado.getCuentaAhorro() != null){
+        if (clienteSeleccionado.getCuentaDeAhorro() != null){
             return true;
         }
         else {
@@ -127,8 +150,18 @@ public class ControladorClientes {
         }
     }
 
-    public boolean hayCuentaCorriente(int seleccionCliente){
-        Cliente clienteSeleccionado = clientes.get(seleccionCliente);
+    /*public boolean hayCuentaCorriente(int id){
+        Cliente clienteSeleccionado = encontrarClientePorId(id);
+        if (clienteSeleccionado.getCuentaCorriente() != null){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }*/
+
+    public boolean hayCuentaCorriente(String rut){
+        Cliente clienteSeleccionado = encontrarClientePorRUT(rut);
         if (clienteSeleccionado.getCuentaCorriente() != null){
             return true;
         }
@@ -147,6 +180,82 @@ public class ControladorClientes {
 
     public boolean hayClientes() {
         return !clientes.isEmpty();
+    }
+
+    public List<Cliente> getClientes() {
+        return clientes;
+    }
+
+    public void agregarCuentaDeAhorro(CuentaDeAhorro cuenta) {
+        List<Cliente> lista = new ArrayList<>();
+        for (int i = 0; i < clientes.size(); i++){
+            if (clientes.get(i).getId() == cuenta.getIdCliente()){
+                Cliente cliente = clientes.get(i);
+                cliente.setCuentaDeAhorro(cuenta);
+                lista.add(cliente);
+            }
+            else {
+                lista.add(clientes.get(i));
+            }
+        }
+        this.clientes = lista;
+    }
+
+    public void agregarCuentasDeAhorro(List<CuentaDeAhorro> cuentasDeAhorro) {
+        for (int i = 0; i < cuentasDeAhorro.size(); i++){
+            agregarCuentaDeAhorro(cuentasDeAhorro.get(i));
+        }
+    }
+
+    public void eliminarCuentaDeAhorro(CuentaDeAhorro cuenta) {
+        List<Cliente> lista = new ArrayList<>();
+        for (int i = 0; i < clientes.size(); i++){
+            if (clientes.get(i).getId() == cuenta.getIdCliente()){
+                Cliente cliente = clientes.get(i);
+                cliente.setCuentaDeAhorro(null);
+                lista.add(cliente);
+            }
+            else {
+                lista.add(clientes.get(i));
+            }
+        }
+        this.clientes = lista;
+    }
+
+    public void agregarCuentaCorriente(CuentaCorriente cuenta) {
+        List<Cliente> lista = new ArrayList<>();
+        for (int i = 0; i < clientes.size(); i++){
+            if (clientes.get(i).getId() == cuenta.getIdCliente()){
+                Cliente cliente = clientes.get(i);
+                cliente.setCuentaCorriente(cuenta);
+                lista.add(cliente);
+            }
+            else {
+                lista.add(clientes.get(i));
+            }
+        }
+        this.clientes = lista;
+    }
+
+    public void agregarCuentasCorrientes(List<CuentaCorriente> cuentasCorrientes) {
+        for (int i = 0; i < cuentasCorrientes.size(); i++){
+            agregarCuentaCorriente(cuentasCorrientes.get(i));
+        }
+    }
+
+    public void eliminarCuentaCorriente(CuentaCorriente cuenta) {
+        List<Cliente> lista = new ArrayList<>();
+        for (int i = 0; i < clientes.size(); i++){
+            if (clientes.get(i).getId() == cuenta.getIdCliente()){
+                Cliente cliente = clientes.get(i);
+                cliente.setCuentaCorriente(null);
+                lista.add(cliente);
+            }
+            else {
+                lista.add(clientes.get(i));
+            }
+        }
+        this.clientes = lista;
     }
 
     /*
@@ -202,15 +311,6 @@ public class ControladorClientes {
             }
         }
         System.out.println("Error: Cuenta no encontrada.");
-    }
-
-    public Cliente encontrarClientePorId(int idCliente) {
-        for (Cliente cliente : clientes) {
-            if (cliente.getId() == idCliente) {
-                return cliente;
-            }
-        }
-        return null;
     }
 
     public List<CuentaBancaria> getCuentasCliente(Cliente cliente){

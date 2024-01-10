@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class BancoVirtual {
     private static ControladorClientes controladorClientes;
     private static ControladorCuentasDeAhorro controladorCuentasDeAhorro;
+    private static ControladorCuentasCorrientes controladorCuentasCorrientes;
 
     private static void mostrarMenu() {
         Scanner scanner = new Scanner(System.in);
@@ -30,7 +31,7 @@ public class BancoVirtual {
                         menuCuentasDeAhorro(scanner);
                         break;
                     case 3:
-                        //menuCuentasCorrientes(scanner);
+                        menuCuentasCorrientes(scanner);
                         break;
                     case 4:
                         System.out.println("Saliendo del programa...");
@@ -213,7 +214,7 @@ public class BancoVirtual {
 
             else {
                 System.out.println("Cliente no encontrado, intente nuevamente");
-                actualizarCliente();
+                menuClientes(scanner);
             }
         }
     }
@@ -253,7 +254,7 @@ public class BancoVirtual {
 
             else {
                 System.out.println("Cliente no encontrado, intente nuevamente");
-                eliminarCliente();
+                menuClientes(scanner);
             }
         }
     }
@@ -269,15 +270,7 @@ public class BancoVirtual {
             System.out.println("Ingrese el rut del cliente: ");
             System.out.println();
             String rut = scanner.next();
-            String res = controladorClientes.buscarCliente(rut);
-            if (res != null){
-                System.out.println("Cliente encontrado en la base de datos");
-                System.out.println();
-                System.out.println(res);
-            }
-            else {
-                System.out.println("Cliente no encontrado en la base de datos");
-            }
+            controladorClientes.buscarCliente(rut);
         }
     }
 
@@ -300,13 +293,13 @@ public class BancoVirtual {
                         crearCuentaDeAhorro(scanner);
                         break;
                     case 2:
-                        //listaCuentasDeAhorro(scanner);
+                        listaCuentasDeAhorro(scanner);
                         break;
                     case 3:
-                        //eliminarCuentaDeAhorro();
+                        eliminarCuentaDeAhorro(scanner);
                         break;
                     case 4:
-                        //buscarCuentaDeAhorro();
+                        buscarCuentaDeAhorro(scanner);
                         break;
                     case 5:
                         mostrarMenu();
@@ -359,41 +352,322 @@ public class BancoVirtual {
                     System.out.print("Saldo mínimo para hacer retiros: ");
                     int tope = scanner.nextInt();
 
-                    /*
-
                     try {
                         controladorCuentasDeAhorro.crearCuentaDeAhorro(idCliente, saldo, tasa, tope);
                         System.out.println("\nCuenta de ahorro creada con éxito.");
                     } catch (Exception e) {
                         System.out.println("Error al crear la cuenta de ahorro: " + e.getMessage());
                     }
-
-                    */
                 }
             }
 
             else {
                 System.out.println("Cliente no encontrado, intente nuevamente");
-                actualizarCliente();
+                menuCuentasDeAhorro(scanner);
             }
+        }
+    }
+
+    private static void listaCuentasDeAhorro(Scanner scanner) {
+        System.out.println();
+
+        if (!controladorClientes.hayClientes()) {
+            System.out.println("No hay cuentas de ahorro en la base de datos.");
+        } else {
+            // Mostrar la lista de cuentas de ahorro
+            System.out.println("Cuentas de ahorro en el banco: ");
+            System.out.println();
+            controladorCuentasDeAhorro.mostrarDetallesCuentasDeAhorro();
+            try {
+                // Opciones adicionales
+                System.out.println("1. Volver al menú anterior");
+                System.out.println("2. Volver al menú principal");
+                System.out.println();
+
+                System.out.print("Seleccione una opción: ");
+                int opcionCliente = scanner.nextInt();
+
+                switch (opcionCliente) {
+                    case 1:
+                        // Volver al menú anterior
+                        menuCuentasDeAhorro(scanner);
+                        break;
+                    case 2:
+                        // Volver al menú principal
+                        mostrarMenu();
+                        break;
+                    default:
+                        System.out.println("Opción no válida. Volviendo al menú anterior.");
+                }
+            }
+            catch (java.util.InputMismatchException e) {
+                System.out.println("Error: Ingrese un número válido.");
+                scanner.nextLine();  // Limpiar el búfer de entrada
+            }
+        }
+    }
+
+    private static void eliminarCuentaDeAhorro(Scanner scanner) {
+        if (!controladorClientes.hayClientes()) {
+            System.out.println("No hay clientes registrados en el banco.");
+        } else {
+            // Mostrar la lista de clientes con números asociados
+            System.out.println("Ingrese el rut del cliente para eliminar su cuenta de ahorro: ");
+            System.out.println();
+            String rut = scanner.next();
+
+            if (controladorClientes.encontrarClientePorRUT(rut) != null) {
+                String nombreCliente = controladorClientes.encontrarClientePorRUT(rut).getNombre();
+
+                System.out.println("Cliente encontrado");
+                System.out.println("Nombre: " + nombreCliente + ", ID: " + controladorClientes.encontrarClientePorRUT(rut).getId());
+
+                if (controladorClientes.encontrarClientePorRUT(rut).getCuentaDeAhorro() != null) {
+                    System.out.println();
+                    System.out.println("Datos de la cuenta:");
+                    System.out.println("ID: " + controladorClientes.encontrarClientePorRUT(rut).getCuentaDeAhorro().getId() + ", Saldo: " + controladorClientes.encontrarClientePorRUT(rut).getCuentaDeAhorro().getSaldo());
+
+                    System.out.println("\nIngrese 1 para borrar la cuenta de ahorro del cliente");
+                    System.out.println("\nPresione cualquier otra tecla para volver al menú de gestión de clientes");
+
+                    int seleccion = scanner.nextInt();
+
+                    if (seleccion == 1) {
+                        controladorCuentasDeAhorro.eliminarCuentaDeAhorro(rut);
+                        menuCuentasDeAhorro(scanner);
+                    }
+
+                    else {
+                        menuCuentasDeAhorro(scanner);
+                    }
+                }
+                else {
+                    System.out.println("El cliente seleccionado no posee una cuenta de ahorro");
+                    menuCuentasDeAhorro(scanner);
+                }
+            }
+
+            else {
+                System.out.println("Cliente no encontrado");
+                menuCuentasDeAhorro(scanner);
+            }
+        }
+    }
+
+    private static void buscarCuentaDeAhorro(Scanner scanner) {
+        if (!controladorClientes.hayClientes()) {
+            System.out.println("No hay clientes registrados en el banco.");
+        } else {
+            // Mostrar la lista de clientes con números asociados
+            System.out.println("Ingrese el rut del cliente: ");
+            System.out.println();
+            String rut = scanner.next();
+            controladorCuentasDeAhorro.buscarCuentaDeAhorro(rut);
+            menuCuentasDeAhorro(scanner);
+        }
+    }
+
+    private static void menuCuentasCorrientes(Scanner scanner){
+        while (true) {
+            try {
+                System.out.println("\nGestionar cuentas corrientes:");
+                System.out.println("\n1. Crear cuenta corriente");
+                System.out.println("2. Lista de cuentas corrientes");
+                System.out.println("3. Eliminar cuenta corriente");
+                System.out.println("4. Buscar cuenta corriente");
+                System.out.println("5. Volver al menú principal");
+
+                System.out.print("\nSeleccione una opción: ");
+                int opcion = scanner.nextInt();
+
+                switch (opcion) {
+                    case 1:
+                        crearCuentaCorriente(scanner);
+                        break;
+                    case 2:
+                        listaCuentasCorrientes(scanner);
+                        break;
+                    case 3:
+                        eliminarCuentaCorriente(scanner);
+                        break;
+                    case 4:
+                        buscarCuentaCorriente(scanner);
+                        break;
+                    case 5:
+                        mostrarMenu();
+                        break;
+                    default:
+                        System.out.println("Opción no válida. Intente de nuevo.");
+                }
+            }
+            catch (java.util.InputMismatchException e) {
+                System.out.println("Error: Ingrese un número válido.");
+                scanner.nextLine();  // Limpiar el búfer de entrada
+            }
+        }
+    }
+
+    private static void crearCuentaCorriente (Scanner scanner) {
+
+        if (!controladorClientes.hayClientes()) {
+            System.out.println("No hay clientes registrados.");
+        } else {
+            // Buscar al cliente por su RUT
+            System.out.println("Ingrese el rut del cliente: ");
+            System.out.println();
+            String rut = scanner.next();
+
+            if (controladorClientes.encontrarClientePorRUT(rut) != null) {
+                String nombreCliente = controladorClientes.encontrarClientePorRUT(rut).getNombre();
+
+                System.out.println("Cliente encontrado");
+                System.out.println("Nombre: " + nombreCliente + ", ID: " + controladorClientes.encontrarClientePorRUT(rut).getId());
+
+                if (controladorClientes.hayCuentaCorriente(rut)){
+                    System.out.println("El cliente ya tiene una cuenta corriente.");
+                    menuCuentasCorrientes(scanner);
+                }
+
+                else {
+
+                    int idCliente = controladorClientes.encontrarClientePorRUT(rut).getId();
+
+                    System.out.println("\nIngrese los datos de la cuenta corriente");
+                    System.out.println();
+
+                    System.out.print("Saldo inicial: ");
+                    int saldo = scanner.nextInt();
+
+                    System.out.print("Cupo de sobregiro: ");
+                    int sobregiro = scanner.nextInt();
+
+                    try {
+                        controladorCuentasCorrientes.crearCuentaCorriente(idCliente, saldo, sobregiro);
+                        System.out.println("\nCuenta corriente creada con éxito.");
+                    } catch (Exception e) {
+                        System.out.println("Error al crear la cuenta corriente: " + e.getMessage());
+                    }
+                }
+            }
+
+            else {
+                System.out.println("Cliente no encontrado, intente nuevamente");
+                menuCuentasCorrientes(scanner);
+            }
+        }
+    }
+
+    private static void listaCuentasCorrientes(Scanner scanner) {
+        System.out.println();
+
+        if (!controladorClientes.hayClientes()) {
+            System.out.println("No hay cuentas corrientes en la base de datos.");
+        } else {
+            // Mostrar la lista de cuentas corrientes
+            System.out.println("Cuentas corrientes en el banco: ");
+            System.out.println();
+            controladorCuentasCorrientes.mostrarDetallesCuentasCorrientes();
+            try {
+                // Opciones adicionales
+                System.out.println("1. Volver al menú anterior");
+                System.out.println("2. Volver al menú principal");
+                System.out.println();
+
+                System.out.print("Seleccione una opción: ");
+                int opcionCliente = scanner.nextInt();
+
+                switch (opcionCliente) {
+                    case 1:
+                        // Volver al menú anterior
+                        menuCuentasCorrientes(scanner);
+                        break;
+                    case 2:
+                        // Volver al menú principal
+                        mostrarMenu();
+                        break;
+                    default:
+                        System.out.println("Opción no válida. Volviendo al menú anterior.");
+                }
+            }
+            catch (java.util.InputMismatchException e) {
+                System.out.println("Error: Ingrese un número válido.");
+                scanner.nextLine();  // Limpiar el búfer de entrada
+            }
+        }
+    }
+
+    private static void eliminarCuentaCorriente(Scanner scanner) {
+        if (!controladorClientes.hayClientes()) {
+            System.out.println("No hay clientes registrados en el banco.");
+        } else {
+            // Mostrar la lista de clientes con números asociados
+            System.out.println("Ingrese el rut del cliente para eliminar su cuenta corriente: ");
+            System.out.println();
+            String rut = scanner.next();
+
+            if (controladorClientes.encontrarClientePorRUT(rut) != null) {
+                String nombreCliente = controladorClientes.encontrarClientePorRUT(rut).getNombre();
+
+                System.out.println("Cliente encontrado");
+                System.out.println("Nombre: " + nombreCliente + ", ID: " + controladorClientes.encontrarClientePorRUT(rut).getId());
+
+                if (controladorClientes.encontrarClientePorRUT(rut).getCuentaCorriente() != null) {
+                    System.out.println();
+                    System.out.println("Datos de la cuenta:");
+                    System.out.println("ID: " + controladorClientes.encontrarClientePorRUT(rut).getCuentaCorriente().getId() + ", Saldo: " + controladorClientes.encontrarClientePorRUT(rut).getCuentaCorriente().getSaldo());
+
+                    System.out.println("\nIngrese 1 para borrar la cuenta de ahorro del cliente");
+                    System.out.println("\nPresione cualquier otra tecla para volver al menú de gestión de clientes");
+
+                    int seleccion = scanner.nextInt();
+
+                    if (seleccion == 1) {
+                        controladorCuentasCorrientes.eliminarCuentaCorriente(rut);
+                        menuCuentasCorrientes(scanner);
+                    }
+
+                    else {
+                        menuCuentasCorrientes(scanner);
+                    }
+                }
+                else {
+                    System.out.println("El cliente seleccionado no posee una cuenta corriente");
+                    menuCuentasCorrientes(scanner);
+                }
+            }
+
+            else {
+                System.out.println("Cliente no encontrado");
+                menuCuentasCorrientes(scanner);
+            }
+        }
+    }
+
+    private static void buscarCuentaCorriente(Scanner scanner) {
+        if (!controladorClientes.hayClientes()) {
+            System.out.println("No hay clientes registrados en el banco.");
+        } else {
+            // Mostrar la lista de clientes con números asociados
+            System.out.println("Ingrese el rut del cliente: ");
+            System.out.println();
+            String rut = scanner.next();
+            controladorCuentasCorrientes.buscarCuentaCorriente(rut);
+            menuCuentasCorrientes(scanner);
         }
     }
 
     public static void main(String[] args) {
         controladorClientes = new ControladorClientes();
         controladorCuentasDeAhorro = new ControladorCuentasDeAhorro();
+        controladorCuentasCorrientes = new ControladorCuentasCorrientes();
 
-        controladorClientes.crearCliente("Marcial", "Díaz", "marcial.diaz03@inacapmail.cl", "19.524.734-k", "+56978030199");
-        controladorClientes.crearCliente("Vale", "Díaz", "vale.diaz03@inacapmail.cl", "19.960.609-9", "+56978036504");
+        if (controladorCuentasDeAhorro.hayCuentasDeAhorro()){
+            controladorClientes.agregarCuentasDeAhorro(controladorCuentasDeAhorro.getCuentasDeAhorro());
+        }
 
-        controladorCuentasDeAhorro.crearCuentaDeAhorro(1, 150000, 6, 100000);
-        controladorCuentasDeAhorro.crearCuentaDeAhorro(2, 666000, 10, 800000);
-
-        /*
-
-        controlador.crearCuentaCorriente(465630, 55000);
-        controlador.crearCuentaCorriente(1000000, 400000);
-        */
+        if (controladorCuentasCorrientes.hayCuentasCorrientes()){
+            controladorClientes.agregarCuentasCorrientes(controladorCuentasCorrientes.getCuentasCorrientes());
+        }
 
         System.out.println("\n¡Hola! Bienvenid@ al módulo de administración del Banco Virtual");
         mostrarMenu();

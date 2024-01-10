@@ -8,6 +8,10 @@ public class CuentaCorriente extends CuentaBancaria {
 
     // Constructor
 
+    public CuentaCorriente() {
+
+    }
+
     public CuentaCorriente(int idCliente, int saldo, int sobregiro) {
         super(idCliente, saldo);
         this.sobregiro = sobregiro;
@@ -23,6 +27,14 @@ public class CuentaCorriente extends CuentaBancaria {
 
     public void setSobregiro(int sobregiro) {
         this.sobregiro = sobregiro;
+    }
+
+    public String toString() {
+
+        return "ID: " + this.getId() + " | " +
+                "ID Cliente: " + this.getIdCliente() + " | " +
+                "Saldo: $" + this.getSaldo() + " | " +
+                "Cupo de sobregiro: $" + this.getSobregiro();
     }
 
     // Operaciones bancarias
