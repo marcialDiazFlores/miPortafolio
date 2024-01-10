@@ -100,4 +100,21 @@ public class CuentaCorrienteDAO implements interfazCuentaCorrienteDAO {
             throw new SQLException("Error al eliminar la cuenta corriente de la base de datos", e);
         }
     }
+
+    public boolean tieneCuentaCorriente(int idCliente) {
+        try (Connection connection = conn.conectar()) {
+            String query = "SELECT * FROM cuentas_corrientes WHERE cliente_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, idCliente);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    return resultSet.next(); // Retorna true si hay resultados, false si no hay resultados
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

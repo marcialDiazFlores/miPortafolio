@@ -2,7 +2,7 @@ package Vista;
 
 import Controlador.*;
 
-import java.util.Scanner;
+        import java.util.Scanner;
 
 public class BancoVirtual {
     private static ControladorClientes controladorClientes;
@@ -422,7 +422,7 @@ public class BancoVirtual {
                 System.out.println("Cliente encontrado");
                 System.out.println("Nombre: " + nombreCliente + ", ID: " + controladorClientes.encontrarClientePorRUT(rut).getId());
 
-                if (controladorClientes.encontrarClientePorRUT(rut).getCuentaDeAhorro() != null) {
+                if (controladorClientes.hayCuentaAhorro(rut)) {
                     System.out.println();
                     System.out.println("Datos de la cuenta:");
                     System.out.println("ID: " + controladorClientes.encontrarClientePorRUT(rut).getCuentaDeAhorro().getId() + ", Saldo: " + controladorClientes.encontrarClientePorRUT(rut).getCuentaDeAhorro().getSaldo());
@@ -611,7 +611,7 @@ public class BancoVirtual {
                 System.out.println("Cliente encontrado");
                 System.out.println("Nombre: " + nombreCliente + ", ID: " + controladorClientes.encontrarClientePorRUT(rut).getId());
 
-                if (controladorClientes.encontrarClientePorRUT(rut).getCuentaCorriente() != null) {
+                if (controladorClientes.hayCuentaCorriente(rut)) {
                     System.out.println();
                     System.out.println("Datos de la cuenta:");
                     System.out.println("ID: " + controladorClientes.encontrarClientePorRUT(rut).getCuentaCorriente().getId() + ", Saldo: " + controladorClientes.encontrarClientePorRUT(rut).getCuentaCorriente().getSaldo());

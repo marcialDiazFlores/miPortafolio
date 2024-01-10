@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import Modelo.Cliente;
 import Modelo.CuentaDeAhorro;
 import db.ConexionBDD;
 
@@ -103,4 +104,22 @@ public class CuentaAhorroDAO implements interfazCuentaAhorroDAO {
             throw new SQLException("Error al eliminar la cuenta de ahorro de la base de datos", e);
         }
     }
+
+    public boolean tieneCuentaDeAhorro(int idCliente) {
+        try (Connection connection = conn.conectar()) {
+            String query = "SELECT * FROM cuentas_ahorro WHERE cliente_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, idCliente);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    return resultSet.next(); // Retorna true si hay resultados, false si no hay resultados
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
 }

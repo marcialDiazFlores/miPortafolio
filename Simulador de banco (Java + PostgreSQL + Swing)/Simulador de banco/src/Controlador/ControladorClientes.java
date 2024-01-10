@@ -16,6 +16,10 @@ public class ControladorClientes {
 
     public ControladorClientes() {
         this.clienteDAO = new ClienteDAO();
+        actualizarClientes();
+    }
+
+    public void actualizarClientes() {
         this.clientes = clienteDAO.obtenerTodosLosClientes();
     }
 
@@ -27,6 +31,50 @@ public class ControladorClientes {
         } catch (SQLException e) {
             // Manejo de la excepción con mensaje de error
             System.err.println("No se pudo agregar el cliente. Error: " + e.getMessage());
+        }
+    }
+
+    public void mostrarDetallesCliente(Cliente cliente){
+        if (cliente != null) {
+            Cliente clienteSeleccionado = encontrarClientePorId(cliente.getId());
+            String cuentaAhorro = (hayCuentaAhorro(cliente.getRut())) ? "Sí" : "No";
+            String cuentaCorriente = (hayCuentaCorriente(cliente.getRut())) ? "Sí" : "No";
+
+            // Mostrar detalles del cliente
+            System.out.print("ID: " + clienteSeleccionado.getId() + " | ");
+            System.out.print("Nombre: " + clienteSeleccionado.getNombre() + " | ");
+            System.out.print("Apellido: " + clienteSeleccionado.getApellido() + " | ");
+            System.out.print("Rut: " + clienteSeleccionado.getRut() + " | ");
+            System.out.print("Email: " + clienteSeleccionado.getEmail() + " | ");
+            System.out.println("Teléfono: " + clienteSeleccionado.getFono());
+            System.out.print(" | ¿Tiene cuenta de ahorro? " + cuentaAhorro + " | ");
+            System.out.println("¿Tiene cuenta corriente? " + cuentaCorriente);
+        }
+    }
+
+    private void ordenarClientesPorId() {
+        Collections.sort(clientes, Comparator.comparingInt(Cliente::getId));
+    }
+
+    public void mostrarDetallesClientes(){
+
+        actualizarClientes();
+
+        if (!hayClientes()){
+            System.out.println("No hay clientes registrados en este momento");
+        }
+        else {
+            ControladorCuentasDeAhorro cont = new ControladorCuentasDeAhorro();
+            agregarCuentasDeAhorro(cont.getCuentasDeAhorro());
+            ControladorCuentasCorrientes contC = new ControladorCuentasCorrientes();
+            agregarCuentasCorrientes(contC.getCuentasCorrientes());
+            ordenarClientesPorId();
+            int cantClientes = this.getCantidadClientes();
+            for (int i = 0; i < cantClientes; i++) {
+                System.out.print("- ");
+                mostrarDetallesCliente(clientes.get(i));
+                System.out.println();
+            }
         }
     }
 
@@ -74,12 +122,25 @@ public class ControladorClientes {
     }
 
     public Cliente encontrarClientePorRUT(String rut) {
+        actualizarCuentas();
         for (Cliente cliente : clientes) {
             if (cliente.getRut().equals(rut)) {
                 return cliente;
             }
         }
         return null;
+    }
+    public void actualizarCuentas() {
+        ControladorCuentasDeAhorro controladorCuentasDeAhorro = new ControladorCuentasDeAhorro();
+        ControladorCuentasCorrientes controladorCuentasCorrientes = new ControladorCuentasCorrientes();
+
+        if (controladorCuentasDeAhorro.hayCuentasDeAhorro()){
+            this.agregarCuentasDeAhorro(controladorCuentasDeAhorro.getCuentasDeAhorro());
+        }
+
+        if (controladorCuentasCorrientes.hayCuentasCorrientes()){
+            this.agregarCuentasCorrientes(controladorCuentasCorrientes.getCuentasCorrientes());
+        }
     }
 
     public Cliente encontrarClientePorId(int idCliente) {
@@ -89,45 +150,6 @@ public class ControladorClientes {
             }
         }
         return null;
-    }
-
-    public void mostrarDetallesCliente(Cliente cliente){
-        if (cliente != null) {
-            Cliente clienteSeleccionado = encontrarClientePorId(cliente.getId());
-            String cuentaAhorro = (hayCuentaAhorro(cliente.getRut())) ? "Sí" : "No";
-            String cuentaCorriente = (hayCuentaCorriente(cliente.getRut())) ? "Sí" : "No";
-
-            // Mostrar detalles del cliente
-            System.out.print("ID: " + clienteSeleccionado.getId() + " | ");
-            System.out.print("Nombre: " + clienteSeleccionado.getNombre() + " | ");
-            System.out.print("Apellido: " + clienteSeleccionado.getApellido() + " | ");
-            System.out.print("Rut: " + clienteSeleccionado.getRut() + " | ");
-            System.out.print("Email: " + clienteSeleccionado.getEmail() + " | ");
-            System.out.println("Teléfono: " + clienteSeleccionado.getFono());
-            System.out.print(" | ¿Tiene cuenta de ahorro? " + cuentaAhorro + " | ");
-            System.out.println("¿Tiene cuenta corriente? " + cuentaCorriente);
-        }
-    }
-
-    private void ordenarClientesPorId() {
-        Collections.sort(clientes, Comparator.comparingInt(Cliente::getId));
-    }
-
-    public void mostrarDetallesClientes(){
-        if (!hayClientes()){
-            System.out.println("No hay clientes registrados en este momento");
-        }
-        else {
-            ControladorCuentasDeAhorro cont = new ControladorCuentasDeAhorro();
-            agregarCuentasDeAhorro(cont.getCuentasDeAhorro());
-            ordenarClientesPorId();
-            int cantClientes = this.getCantidadClientes();
-            for (int i = 0; i < cantClientes; i++) {
-                System.out.print("- ");
-                mostrarDetallesCliente(clientes.get(i));
-                System.out.println();
-            }
-        }
     }
 
     /*public boolean hayCuentaAhorro(int id){
@@ -142,7 +164,9 @@ public class ControladorClientes {
 
     public boolean hayCuentaAhorro(String rut){
         Cliente clienteSeleccionado = encontrarClientePorRUT(rut);
-        if (clienteSeleccionado.getCuentaDeAhorro() != null){
+        ControladorCuentasDeAhorro controladorCuentasDeAhorro = new ControladorCuentasDeAhorro();
+
+        if (controladorCuentasDeAhorro.tieneCuentaDeAhorro(clienteSeleccionado)){
             return true;
         }
         else {
@@ -150,19 +174,11 @@ public class ControladorClientes {
         }
     }
 
-    /*public boolean hayCuentaCorriente(int id){
-        Cliente clienteSeleccionado = encontrarClientePorId(id);
-        if (clienteSeleccionado.getCuentaCorriente() != null){
-            return true;
-        }
-        else {
-            return false;
-        }
-    }*/
-
     public boolean hayCuentaCorriente(String rut){
         Cliente clienteSeleccionado = encontrarClientePorRUT(rut);
-        if (clienteSeleccionado.getCuentaCorriente() != null){
+        ControladorCuentasCorrientes controladorCuentasCorrientes = new ControladorCuentasCorrientes();
+
+        if (controladorCuentasCorrientes.tieneCuentaCorriente(clienteSeleccionado)){
             return true;
         }
         else {

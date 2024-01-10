@@ -142,26 +142,8 @@ public class ControladorCuentasCorrientes {
         }
     }
 
-    public CuentaCorriente encontrarCuentaPorRUT(String rut, List<Cliente> listaClientes) {
-        CuentaCorriente cuenta = new CuentaCorriente();
-        if (listaClientes != null){
-            for (Cliente cliente : listaClientes) {
-                if (cliente.getRut() == rut) {
-                    cuenta = cliente.getCuentaCorriente();
-                }
-            }
-            if (cuenta != null) {
-                return cuenta;
-            }
-            else {
-                System.out.println("No se encontró la cuenta corriente");
-                return null;
-            }
-        }
-        else {
-            System.out.println("No hay cuentas registradas en el banco");
-            return null;
-        }
+    public boolean tieneCuentaCorriente(Cliente cliente) {
+        return cuentaCorrienteDAO.tieneCuentaCorriente(cliente.getId());
     }
     public int getCantidadCuentasCorrientes() {
         if (cuentasCorrientes != null){

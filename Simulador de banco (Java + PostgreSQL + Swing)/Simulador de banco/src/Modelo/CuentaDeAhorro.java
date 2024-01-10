@@ -31,6 +31,7 @@ public class CuentaDeAhorro extends CuentaBancaria {
         this.topeMinimo = topeMinimo;
     }
 
+    @Override
     public String toString() {
 
         return "ID de cuenta: " + this.getId() + " | " +
@@ -39,35 +40,4 @@ public class CuentaDeAhorro extends CuentaBancaria {
                 "Tope mínimo: $" + this.getTopeMinimo() + " | " +
                 "Tasa de interés: " + this.getTasaInteres() + "%";
     }
-
-    /*
-
-    // Polimorfismo (sobrecarga del método)
-    public void retirar(int monto) {
-        if (monto > 0) {
-            int saldoActual = this.getSaldo();
-
-            // Aplicar tasa de interés a la cuenta de ahorro
-            int intereses = saldoActual * tasaInteres/100;
-            this.setSaldo(saldoActual + intereses);
-            saldoActual = this.getSaldo();
-
-            // Verificar si hay suficiente saldo para el retiro
-            if (monto <= saldoActual && saldoActual >= topeMinimo) {
-                // Aplicar retiro
-                this.setSaldo(saldoActual - monto);
-                System.out.println();
-                System.out.println("Retiro exitoso. Se aplicó una tasa de interés de " + (tasaInteres) + "%.");
-                System.out.println("Saldo de la cuenta: $" + getSaldo());
-            } else if (monto <= saldoActual) {
-                System.out.println("Error: La cuenta no ha alcanzado el tope mínimo de ahorro.");
-            } else {
-                System.out.println("Error: Fondos insuficientes para hacer el retiro.");
-            }
-        } else {
-            System.out.println("Error: El monto de retiro debe ser mayor que cero.");
-        }
-    }
-
-    */
 }

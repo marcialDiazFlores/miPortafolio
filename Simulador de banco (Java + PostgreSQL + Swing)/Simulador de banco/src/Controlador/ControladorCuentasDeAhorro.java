@@ -141,6 +141,10 @@ public class ControladorCuentasDeAhorro {
         }
     }
 
+    public boolean tieneCuentaDeAhorro(Cliente cliente) {
+        return cuentaDeAhorroDAO.tieneCuentaDeAhorro(cliente.getId());
+    }
+
     public CuentaDeAhorro encontrarCuentaPorRUT(String rut, List<Cliente> listaClientes) {
         CuentaDeAhorro cuenta = new CuentaDeAhorro();
         if (listaClientes != null){
